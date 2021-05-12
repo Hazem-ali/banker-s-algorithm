@@ -213,14 +213,17 @@ int main()
         // Resources allocated to processes
         int allot[P][R];
         askAllocation(allot);
+        cout << "-------------------------------------------" <<endl;
 
         // Maximum R that can be allocated
         int maxm[P][R];
         askMax(maxm);
+        cout << "-------------------------------------------" <<endl;
 
         // Available instances of resources
         int avail[R];
         askAvail(avail);
+        cout << "-------------------------------------------" <<endl;
 
         // To store safe sequence
         int safeSeq[P];
