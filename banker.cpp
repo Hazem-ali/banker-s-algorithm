@@ -1,19 +1,22 @@
 #include "bits/stdc++.h"
 using namespace std;
 
-// Number of processes
-const int P = 5;
+// // Number of processes
+// const int P = 5;
 
-// Number of resources
-const int R = 4;
+// // Number of resources
+// const int R = 4;
 
-// Request resources array in case of Immediate Request Grant Enquiry
-int request_resources[R] = {0};
+// // Request resources array in case of Immediate Request Grant Enquiry
+// int request_resources[R] = {0};
 
 // Function to find the need of each process
-void calculateNeed(int need[P][R], int maxm[P][R],
-                   int allot[P][R], int process_number)
+void calculateNeed(vector<vector<int>> &need, vector<vector<int>> &maxm,
+                   vector<vector<int>> &allot, vector<int> &request_resources, int process_number)
 {
+
+    int P = allot.size();
+    int R = allot[0].size();
     // Calculating Need of each P
     for (int i = 0; i < P; i++)
     {
@@ -34,31 +37,42 @@ void calculateNeed(int need[P][R], int maxm[P][R],
         }
     }
 }
-void printNeed(int need[P][R])
+void printNeed(vector<vector<int>> &need)
 {
     // Printing Need for Each Process
+    // 0 0 1 2 1 0 0 0 1 3 5 4 0 6 3 2 0 0 1 4 0 0 1 2 1 7 5 0 2 3 5 6 0 6 5 2 0 6 5 6 1 5 2 0
+    // 4req 0 2 1 0
+    int P = need.size();
+    int R = need[0].size();
     cout << "Need Output" << endl;
+    cout << "    ";
+    for (size_t i = 0; i < R; i++)
+    {
+        cout << "R" << i + 1 << " ";
+    }
+    cout << endl;
+
     for (int i = 0; i < P; i++)
     {
-        cout << "P" << i << ": ";
-        cout << "(";
+        cout << "P" << i << "  ";
+        // cout << "(";
         for (int j = 0; j < R; j++)
         {
             cout << need[i][j];
             if (j != R - 1)
             {
-                cout << ", ";
+                cout << "  ";
             }
         }
-        cout << ")" << endl;
+        cout << endl;
     }
 }
 
-void printSafeSequence(int safeSeq[P], int req)
+void printSafeSequence(vector<int> &safeSeq, int req)
 {
     // If system is in safe state then
     // safe sequence will be as below
-
+    int P = safeSeq.size();
     cout << "Safe state <";
     for (int i = 0; i < P; i++)
     {
@@ -79,15 +93,19 @@ void printSafeSequence(int safeSeq[P], int req)
 }
 
 // Function to find the system is in safe state or not
-bool isSafe(int avail[], int need[P][R],
-            int allot[][R], int safeSeq[P])
+bool isSafe(vector<int> &avail, vector<vector<int>> &need,
+            vector<vector<int>> &allot, vector<int> &safeSeq)
 {
+    int P = allot.size();
+    int R = allot[0].size();
 
     // Mark all processes as infinish
-    bool finish[P] = {0};
+    vector<bool> finish(P, 0);
+    // bool finish[P] = {0};
 
     // Make a copy of available resources
-    int work[R];
+    // int work[R];
+    vector<int> work(R);
     for (int i = 0; i < R; i++)
         work[i] = avail[i];
 
@@ -145,7 +163,7 @@ bool isSafe(int avail[], int need[P][R],
     return true;
 }
 
-void askAllocation(int allot[P][R])
+void askAllocation(vector<vector<int>> &allot)
 {
     // int allot[][R] = {{0, 0, 1, 2},
     //                   {1, 0, 0, 0},
@@ -153,6 +171,8 @@ void askAllocation(int allot[P][R])
     //                   {0, 6, 3, 2},
     //                   {0, 0, 1, 4}};
 
+    int P = allot.size();
+    int R = allot[0].size();
     // Resources allocated to processes
     cout << "Enter Allocation Matrix: " << endl;
     for (size_t i = 0; i < P; i++)
@@ -166,7 +186,7 @@ void askAllocation(int allot[P][R])
     }
 }
 
-void askMax(int maxm[P][R])
+void askMax(vector<vector<int>> &maxm)
 {
     // to processes
     // int maxm[][R] = {{0, 0, 1, 2},
@@ -175,6 +195,8 @@ void askMax(int maxm[P][R])
     //                  {0, 6, 5, 2},
     //                  {0, 6, 5, 6}};
 
+    int P = maxm.size();
+    int R = maxm[0].size();
     // Maximum R that can be allocated
     cout << "Enter Maximum Resource Matrix: " << endl;
     for (size_t i = 0; i < P; i++)
@@ -188,11 +210,12 @@ void askMax(int maxm[P][R])
     }
 }
 
-void askAvail(int avail[R])
+void askAvail(vector<int> &avail)
 {
     // int avail[] = {1, 5, 2, 0};
 
     // Available instances of resources
+    int R = avail.size();
     cout << "Enter Available Resource Matrix: " << endl;
     cout << "Enter " << R << " resources separated by space: ";
     for (size_t i = 0; i < R; i++)
@@ -206,31 +229,58 @@ int main()
 {
     while (true)
     {
-        int need[P][R];
 
-        int processes[] = {0, 1, 2, 3, 4};
+        int P, R;
+        cout << "Enter Number of Processes: ";
+        cin >> P;
+        cout << "Enter Number of Resources: ";
+        cin >> R;
+
+        // int request_resources[R] = {0};
+        vector<int> request_resources(R, 0);
+        vector<vector<int>> need(P, vector<int>(R));
+        // int need[P][R];
+
+        vector<int> processes(P);
+        for (size_t i = 0; i < P; i++)
+        {
+            processes[i] = i;
+        }
+        // int processes[] = {0, 1, 2, 3, 4};
 
         // Resources allocated to processes
-        int allot[P][R];
+        vector<vector<int>> allot(P, vector<int>(R));
+        // int allot[P][R];
         askAllocation(allot);
-        cout << "-------------------------------------------" <<endl;
+        cout << "-------------------------------------------" << endl;
 
         // Maximum R that can be allocated
-        int maxm[P][R];
+        vector<vector<int>> maxm(P, vector<int>(R));
+        // int maxm[P][R];
         askMax(maxm);
-        cout << "-------------------------------------------" <<endl;
+        cout << "-------------------------------------------" << endl;
 
         // Available instances of resources
-        int avail[R];
+        vector<int> avail(R);
+        // int avail[R];
         askAvail(avail);
-        cout << "-------------------------------------------" <<endl;
+        cout << "-------------------------------------------" << endl;
 
         // To store safe sequence
-        int safeSeq[P];
+        vector<int> safeSeq(P);
+        // int safeSeq[P];
 
         char answer;
+
+        // Function to calculate need matrix
+        calculateNeed(need, maxm, allot, request_resources, -1);
+
+        // Printing Need
+        printNeed(need);
+
         while (true)
         {
+
             cout << "Press: " << endl;
             cout << "S or s for Safe State Enquiry" << endl;
             cout << "R or r for Immediate Request Grant Enquiry" << endl;
@@ -239,11 +289,6 @@ int main()
             cin >> answer;
             if (answer == 'S' || answer == 's')
             {
-                // Function to calculate need matrix
-                calculateNeed(need, maxm, allot, -1);
-
-                // Printing Need
-                printNeed(need);
 
                 // Check system is in safe state or not
                 if (isSafe(avail, need, allot, safeSeq))
@@ -254,7 +299,7 @@ int main()
                 }
                 else
                 {
-                    cout << "No, System is not in Safe State";
+                    cout << "No, System is not in Safe State" << endl;
                 }
             }
             else if (answer == 'R' || answer == 'r')
@@ -303,10 +348,10 @@ int main()
                 }
 
                 // Function to calculate need matrix
-                calculateNeed(need, maxm, allot, process_number);
+                calculateNeed(need, maxm, allot, request_resources, process_number);
 
-                // Printing Need
-                printNeed(need);
+                // // Printing Need
+                // printNeed(need);
 
                 // Check system is in safe state or not
                 if (isSafe(avail, need, allot, safeSeq))
@@ -317,7 +362,7 @@ int main()
                 }
                 else
                 {
-                    cout << "No, System is not in Safe State";
+                    cout << "No, System is not in Safe State" << endl;
                 }
             }
             else if (answer == 'N' || answer == 'n')
