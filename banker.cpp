@@ -336,7 +336,7 @@ int main()
                 }
                 if (!success)
                 {
-                    cout << "No, Immediate Request Rejected" << endl;
+                    cout << "No, Immediate Request Rejected. No enough resources" << endl;
                     continue;
                 }
 
@@ -362,7 +362,7 @@ int main()
                 }
                 else
                 {
-                    cout << "No, System is not in Safe State" << endl;
+                    cout << "No, Process must wait" << endl;
                 }
             }
             else if (answer == 'N' || answer == 'n')
